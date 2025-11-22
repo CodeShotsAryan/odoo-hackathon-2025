@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, ArrowLeft, CheckCircle, Key, RefreshCw } from 'lucide-react';
+import { Mail, ArrowLeft, Key } from 'lucide-react';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import { useToast } from '../../context/ToastContext';
-import { apiMock } from '../../services/mockApi';
+import apiService from '../../services/api';
 import { ToastType } from '../../types';
 
 enum Step {
@@ -37,12 +37,13 @@ const ForgotPassword = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await apiMock.requestPasswordReset(email);
+      await apiService.auth.requestOtp(email);
       setStep(Step.OTP);
       setTimer(30);
       addToast('OTP sent to your email', ToastType.SUCCESS);
-    } catch (error) {
-      addToast('Failed to send OTP', ToastType.ERROR);
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.detail || 'Failed to send OTP';
+      addToast(errorMsg, ToastType.ERROR);
     } finally {
       setIsLoading(false);
     }
@@ -50,29 +51,31 @@ const ForgotPassword = () => {
 
   const handleOtpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    try {
-      await apiMock.verifyOtp(otp);
-      setStep(Step.RESET);
-      addToast('OTP Verified', ToastType.SUCCESS);
-    } catch (error) {
-      addToast('Invalid OTP. Try 123456', ToastType.ERROR);
-    } finally {
-      setIsLoading(false);
-    }
+    setStep(Step.RESET);
   };
 
   const handleResetSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await apiMock.resetPassword();
+      await apiService.auth.verifyOtp(email, otp, newPassword);
       addToast('Password reset successfully', ToastType.SUCCESS);
       navigate('/login');
-    } catch (error) {
-      addToast('Failed to reset password', ToastType.ERROR);
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.detail || 'Failed to reset password';
+      addToast(errorMsg, ToastType.ERROR);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      await apiService.auth.requestOtp(email);
+      setTimer(30);
+      addToast('OTP resent', ToastType.SUCCESS);
+    } catch (error) {
+      addToast('Failed to resend OTP', ToastType.ERROR);
     }
   };
 
@@ -126,7 +129,7 @@ const ForgotPassword = () => {
               {timer > 0 ? (
                 <span className="text-gray-500">Resend code in 00:{timer.toString().padStart(2, '0')}</span>
               ) : (
-                <button type="button" onClick={() => setTimer(30)} className="text-brand-500 hover:underline">
+                <button type="button" onClick={handleResendOtp} className="text-brand-500 hover:underline">
                   Resend Code
                 </button>
               )}

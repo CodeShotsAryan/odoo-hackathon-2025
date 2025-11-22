@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../../components/Layout';
-import { apiMock } from '../../services/mockApi';
+import apiService from '../../services/api';
 import { Delivery } from '../../types';
 import ViewToggle from '../../components/ui/ViewToggle';
 import DeliveriesTable from '../../components/operations/DeliveriesTable';
@@ -19,7 +19,7 @@ const Deliveries = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await apiMock.operations.getDeliveries();
+        const result = await apiService.operations.getDeliveries();
         setData(result);
       } catch (error) {
         console.error('Failed to load deliveries', error);
@@ -30,7 +30,6 @@ const Deliveries = () => {
     fetchData();
   }, []);
 
-  // Filtering Logic
   const filteredData = data.filter(item => {
     const matchesSearch = 
       item.reference.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -45,7 +44,6 @@ const Deliveries = () => {
     <Layout showSidebar>
       <div className="space-y-6">
         
-        {/* Page Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 animate-fade-in">
           <div className="flex items-center gap-4">
             <Link to="/dashboard" className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-card text-gray-500 transition-colors">
@@ -68,7 +66,6 @@ const Deliveries = () => {
                </Button>
              </Link>
              
-             {/* Search Bar */}
              <div className="relative flex-1 md:w-64">
                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                  <Search size={16} />
@@ -82,7 +79,6 @@ const Deliveries = () => {
                />
              </div>
 
-             {/* Small Filter Chips */}
              <div className="flex gap-1 bg-white dark:bg-dark-card p-1 rounded-lg border border-gray-200 dark:border-dark-border">
                 {['Ready', 'Waiting', 'Late'].map(status => (
                    <button
@@ -103,7 +99,6 @@ const Deliveries = () => {
           </div>
         </div>
 
-        {/* Content Area */}
         <div className="min-h-[600px]">
           {loading ? (
             <div className="w-full h-64 flex items-center justify-center">

@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
-import { apiMock } from '../../services/mockApi';
+import apiService from '../../services/api';
 import { Warehouse, ToastType } from '../../types';
 import { useToast } from '../../context/ToastContext';
 import WarehouseList from '../../components/settings/WarehouseList';
@@ -10,7 +9,7 @@ import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
 import { Plus, Warehouse as WarehouseIcon } from 'lucide-react';
 
-const WarehousePage = () => {
+export const WarehousePage = () => {
   const { addToast } = useToast();
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse | null>(null);
@@ -20,7 +19,7 @@ const WarehousePage = () => {
 
   const fetchWarehouses = async () => {
     try {
-      const data = await apiMock.warehouse.getAll();
+      const data = await apiService.warehouse.getAll();
       setWarehouses(data);
     } catch (err) {
       addToast('Failed to load warehouses', ToastType.ERROR);
@@ -36,18 +35,16 @@ const WarehousePage = () => {
   const handleSave = async (data: Omit<Warehouse, 'id'>) => {
     try {
       if (selectedWarehouse) {
-        // Update
-        await apiMock.warehouse.update(selectedWarehouse.id, data);
+        await apiService.warehouse.update(selectedWarehouse.id, data);
         addToast('Warehouse updated successfully', ToastType.SUCCESS);
       } else {
-        // Create
-        await apiMock.warehouse.create(data);
+        await apiService.warehouse.create(data);
         addToast('Warehouse created successfully', ToastType.SUCCESS);
       }
-      fetchWarehouses(); // Refresh list
-      setSelectedWarehouse(null); // Reset form to "New" mode
+      fetchWarehouses();
+      setSelectedWarehouse(null);
     } catch (error: any) {
-      throw error; // Let form handle error display
+      throw error;
     }
   };
 
@@ -59,7 +56,7 @@ const WarehousePage = () => {
   const handleDelete = async () => {
     if (!itemToDelete) return;
     try {
-      await apiMock.warehouse.delete(itemToDelete);
+      await apiService.warehouse.delete(itemToDelete);
       addToast('Warehouse deleted', ToastType.SUCCESS);
       fetchWarehouses();
       if (selectedWarehouse?.id === itemToDelete) {
@@ -77,7 +74,6 @@ const WarehousePage = () => {
     <Layout showSidebar>
       <div className="space-y-8 pb-20">
         
-        {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in">
           <div className="flex items-center gap-4">
             <div className="p-2 bg-brand-100 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400 rounded-xl">
@@ -94,10 +90,8 @@ const WarehousePage = () => {
           </Button>
         </div>
 
-        {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          {/* List Column */}
           <div className="lg:col-span-7 xl:col-span-8">
             {loading ? (
               <div className="flex justify-center p-12"><div className="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin" /></div>
@@ -110,7 +104,6 @@ const WarehousePage = () => {
             )}
           </div>
 
-          {/* Form Column */}
           <div className="lg:col-span-5 xl:col-span-4">
             <WarehouseForm 
               initialData={selectedWarehouse} 
@@ -122,7 +115,6 @@ const WarehousePage = () => {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}

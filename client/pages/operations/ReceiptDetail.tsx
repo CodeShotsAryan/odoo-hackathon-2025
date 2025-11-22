@@ -1,8 +1,7 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Layout from '../../components/Layout';
-import { apiMock } from '../../services/mockApi';
+import apiService from '../../services/api';
 import { ReceiptDetail as IReceiptDetail, Product } from '../../types';
 import ReceiptHeader from '../../components/operations/ReceiptHeader';
 import ReceiptMeta from '../../components/operations/ReceiptMeta';
@@ -23,7 +22,7 @@ const ReceiptDetail = () => {
     const fetchReceipt = async () => {
       if (!id) return;
       try {
-        const data = await apiMock.operations.getReceiptById(parseInt(id));
+        const data = await apiService.operations.getReceiptById(parseInt(id));
         setReceipt(data);
       } catch (error) {
         console.error(error);
@@ -44,11 +43,9 @@ const ReceiptDetail = () => {
       return;
     }
     try {
-       await apiMock.operations.validateReceipt(receipt!.id);
+       await apiService.operations.validateReceipt(receipt!.id);
        setReceipt(prev => {
          if (!prev) return null;
-         // Logic: Draft -> Ready -> Done. 
-         // For mock simplicity, let's assume if it's Draft we move to Ready. If Ready we move to Done.
          const nextStatus = prev.status === 'Draft' ? 'Ready' : 'Done';
          return { ...prev, status: nextStatus };
        });
@@ -60,7 +57,7 @@ const ReceiptDetail = () => {
 
   const handleCancel = async () => {
      if(window.confirm("Are you sure you want to cancel this receipt?")) {
-        await apiMock.operations.cancelReceipt(receipt!.id);
+        await apiService.operations.cancelReceipt(receipt!.id);
         setReceipt(prev => prev ? ({ ...prev, status: 'Cancelled' }) : null);
         addToast("Receipt cancelled", ToastType.INFO);
      }
@@ -122,7 +119,6 @@ const ReceiptDetail = () => {
     <Layout showSidebar>
       <div className="max-w-5xl mx-auto animate-fade-in pb-20">
         
-        {/* Breadcrumb / Back */}
         <div className="flex items-center gap-2 mb-6 text-sm text-gray-500">
            <Link to="/operations/receipts" className="flex items-center hover:text-brand-500 transition-colors">
              <ArrowLeft size={16} className="mr-1" /> Receipts

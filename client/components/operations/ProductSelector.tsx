@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { apiMock } from '../../services/mockApi';
+import apiService from '../../services/api';
 import { Product } from '../../types';
 import { Search, Plus } from 'lucide-react';
 
@@ -16,7 +15,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({ onSelect }) => {
   useEffect(() => {
     const search = async () => {
       if (query.length > 0) {
-        const data = await apiMock.operations.searchProducts(query);
+        const data = await apiService.operations.searchProducts(query);
         setResults(data);
         setIsOpen(true);
       } else {
@@ -57,7 +56,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({ onSelect }) => {
               onClick={() => handleSelect(p)}
             >
               <div className="flex flex-col">
-                <span className="font-medium text-gray-900 dark:text-white text-sm">[{p.code}] {p.name}</span>
+                <span className="font-medium text-gray-900 dark:text-white text-sm">[{p.code || p.sku}] {p.name}</span>
                 <span className="text-xs text-gray-500">Available: {p.stock}</span>
               </div>
               <Plus size={16} className="text-gray-400 group-hover:text-brand-500" />

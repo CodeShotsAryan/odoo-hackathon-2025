@@ -1,12 +1,11 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Layout from '../../components/Layout';
-import { apiMock } from '../../services/mockApi';
+import apiService from '../../services/api';
 import { Adjustment, ToastType } from '../../types';
 import { useToast } from '../../context/ToastContext';
 import Button from '../../components/ui/Button';
-import { ArrowLeft, Calendar, User, Box, FileText, AlertTriangle, CheckCircle, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Calendar, User, Box, FileText, CheckCircle, RotateCcw } from 'lucide-react';
 
 const AdjustmentDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,7 +18,7 @@ const AdjustmentDetail = () => {
   const loadData = async () => {
     if (!id) return;
     try {
-      const result = await apiMock.adjustments.getById(id);
+      const result = await apiService.adjustments.getById(id);
       if (!result) throw new Error('Not found');
       setData(result);
     } catch (error) {
@@ -38,7 +37,7 @@ const AdjustmentDetail = () => {
     if (!data || !window.confirm('Apply this adjustment? Stock will be updated.')) return;
     setProcessing(true);
     try {
-      await apiMock.adjustments.apply(data.id);
+      await apiService.adjustments.apply(data.id);
       addToast('Applied Successfully', ToastType.SUCCESS);
       loadData();
     } catch (err) {
@@ -49,12 +48,12 @@ const AdjustmentDetail = () => {
   };
 
   const handleRevert = async () => {
-    if (!data || !window.confirm('Revert this adjustment? A new counter-adjustment will be created.')) return;
+    if (!data || !window.confirm('Revert this adjustment?')) return;
     setProcessing(true);
     try {
-      await apiMock.adjustments.revert(data.id);
+      await apiService.adjustments.revert(data.id);
       addToast('Reverted Successfully', ToastType.SUCCESS);
-      navigate('/operations/adjustments'); // Go back to list to see new revert entry
+      navigate('/operations/adjustments');
     } catch (err) {
       addToast('Failed to revert', ToastType.ERROR);
     } finally {
@@ -66,7 +65,7 @@ const AdjustmentDetail = () => {
     if (!data || !window.confirm('Cancel this draft?')) return;
     setProcessing(true);
     try {
-      await apiMock.adjustments.cancel(data.id);
+      await apiService.adjustments.cancel(data.id);
       addToast('Cancelled', ToastType.INFO);
       loadData();
     } catch (err) {
@@ -82,8 +81,6 @@ const AdjustmentDetail = () => {
   return (
     <Layout showSidebar>
       <div className="max-w-4xl mx-auto pb-20 animate-fade-in">
-         
-         {/* Header */}
          <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-4">
                <Link to="/operations/adjustments" className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-card text-gray-500 transition-colors">
@@ -119,7 +116,6 @@ const AdjustmentDetail = () => {
             </div>
          </div>
 
-         {/* Main Card */}
          <div className="bg-white dark:bg-dark-card rounded-2xl border border-gray-200 dark:border-dark-border shadow-sm overflow-hidden">
             <div className="p-6 border-b border-gray-100 dark:border-dark-border bg-gray-50/50 dark:bg-dark-bg/50 flex justify-between items-center">
                <div className="flex items-center gap-3">
@@ -160,7 +156,6 @@ const AdjustmentDetail = () => {
 
                <div className="space-y-6 border-l border-gray-100 dark:border-dark-border pl-8">
                   <div className="relative pb-6 border-l-2 border-brand-200 dark:border-brand-900 ml-2 space-y-8">
-                     {/* Created Event */}
                      <div className="relative pl-6">
                         <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-brand-500 border-4 border-white dark:border-dark-card" />
                         <div className="text-sm font-bold text-gray-900 dark:text-white">Created</div>
@@ -170,7 +165,6 @@ const AdjustmentDetail = () => {
                         </div>
                      </div>
 
-                     {/* Applied Event */}
                      {data.status === 'Applied' && (
                         <div className="relative pl-6">
                            <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-green-500 border-4 border-white dark:border-dark-card" />

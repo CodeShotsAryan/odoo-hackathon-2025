@@ -1,12 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../../components/Layout';
-import { apiMock } from '../../services/mockApi';
+import apiService from '../../services/api';
 import { Adjustment, AdjustmentType, AdjustmentStatus } from '../../types';
 import AdjustmentsTable from '../../components/adjustments/AdjustmentsTable';
 import Button from '../../components/ui/Button';
-import { Search, Plus, Filter, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Search, Plus, ArrowLeft, CheckCircle } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 import { ToastType } from '../../types';
 
@@ -16,17 +15,16 @@ const Adjustments = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  
-  // Filters
   const [typeFilter, setTypeFilter] = useState<AdjustmentType | 'ALL'>('ALL');
   const [statusFilter, setStatusFilter] = useState<AdjustmentStatus | 'ALL'>('ALL');
 
   const fetchData = async () => {
     try {
-      const result = await apiMock.adjustments.list();
+      const result = await apiService.adjustments.list();
       setData(result);
     } catch (error) {
       console.error('Failed to load adjustments', error);
+      addToast('Failed to load adjustments', ToastType.ERROR);
     } finally {
       setLoading(false);
     }
@@ -36,7 +34,6 @@ const Adjustments = () => {
     fetchData();
   }, []);
 
-  // Filtering logic
   const filteredData = data.filter(item => {
     const matchesSearch = 
       item.reference.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -60,7 +57,7 @@ const Adjustments = () => {
     if (!window.confirm(`Apply ${selectedIds.length} selected drafts?`)) return;
 
     try {
-      await apiMock.adjustments.bulkApply(selectedIds);
+      await apiService.adjustments.bulkApply(selectedIds);
       addToast(`Applied ${selectedIds.length} adjustments`, ToastType.SUCCESS);
       setSelectedIds([]);
       fetchData();
@@ -72,8 +69,6 @@ const Adjustments = () => {
   return (
     <Layout showSidebar>
       <div className="space-y-6 pb-20">
-        
-        {/* Header */}
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 animate-fade-in">
           <div className="flex items-center gap-4">
             <Link to="/dashboard" className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-card text-gray-500 transition-colors">
@@ -90,7 +85,6 @@ const Adjustments = () => {
           </div>
 
           <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
-             {/* Bulk Action */}
              {selectedIds.length > 0 && (
                <Button onClick={handleBulkApply} className="py-2 px-4 text-sm bg-green-600 hover:bg-green-700">
                  <CheckCircle size={16} className="mr-2" /> Apply Selected ({selectedIds.length})
@@ -116,7 +110,6 @@ const Adjustments = () => {
           </div>
         </div>
 
-        {/* Filters */}
         <div className="flex flex-wrap gap-2">
            <select 
              className="px-3 py-2 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-lg text-sm outline-none focus:border-brand-500"
@@ -141,7 +134,6 @@ const Adjustments = () => {
            </select>
         </div>
 
-        {/* Content */}
         <div className="min-h-[600px]">
           {loading ? (
             <div className="w-full h-64 flex items-center justify-center">

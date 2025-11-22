@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
-import { apiMock } from '../../services/mockApi';
+import apiService from '../../services/api';
 import { Location, Warehouse, ToastType } from '../../types';
 import { useToast } from '../../context/ToastContext';
 import LocationList from '../../components/settings/LocationList';
@@ -10,11 +10,12 @@ import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
 import { Plus, MapPin } from 'lucide-react';
 
+
 const LocationsPage = () => {
   const { addToast } = useToast();
-  const [locations, setLocations] = useState<Location[]>([]);
+  const [locations, setLocations] = useState<any[]>([]);
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
@@ -22,8 +23,8 @@ const LocationsPage = () => {
   const fetchData = async () => {
     try {
       const [locData, whData] = await Promise.all([
-        apiMock.locations.getAll(),
-        apiMock.warehouse.getAll()
+        apiService.locations.getAll(),
+        apiService.warehouse.getAll()
       ]);
       setLocations(locData);
       setWarehouses(whData);
@@ -38,16 +39,16 @@ const LocationsPage = () => {
     fetchData();
   }, []);
 
-  const handleSave = async (data: Omit<Location, 'id'>) => {
+  const handleSave = async (data: any) => {
     try {
       if (selectedLocation) {
-        await apiMock.locations.update(selectedLocation.id, data);
+        await apiService.locations.update(selectedLocation.id, data);
         addToast('Location updated successfully', ToastType.SUCCESS);
       } else {
-        await apiMock.locations.create(data);
+        await apiService.locations.create(data);
         addToast('Location created successfully', ToastType.SUCCESS);
       }
-      fetchData(); // Refresh list
+      fetchData();
       setSelectedLocation(null);
     } catch (error: any) {
       throw error;
@@ -62,7 +63,7 @@ const LocationsPage = () => {
   const handleDelete = async () => {
     if (!itemToDelete) return;
     try {
-      await apiMock.locations.delete(itemToDelete);
+      await apiService.locations.delete(itemToDelete);
       addToast('Location deleted', ToastType.SUCCESS);
       fetchData();
       if (selectedLocation?.id === itemToDelete) {
@@ -80,7 +81,6 @@ const LocationsPage = () => {
     <Layout showSidebar>
       <div className="space-y-8 pb-20">
         
-        {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in">
           <div className="flex items-center gap-4">
             <div className="p-2 bg-brand-100 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400 rounded-xl">
@@ -97,10 +97,8 @@ const LocationsPage = () => {
           </Button>
         </div>
 
-        {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          {/* List Column */}
           <div className="lg:col-span-7 xl:col-span-8">
             {loading ? (
               <div className="flex justify-center p-12"><div className="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin" /></div>
@@ -113,7 +111,6 @@ const LocationsPage = () => {
             )}
           </div>
 
-          {/* Form Column */}
           <div className="lg:col-span-5 xl:col-span-4">
             <LocationForm 
               initialData={selectedLocation} 
@@ -126,7 +123,6 @@ const LocationsPage = () => {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
@@ -146,5 +142,6 @@ const LocationsPage = () => {
     </Layout>
   );
 };
+
 
 export default LocationsPage;

@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../../components/Layout';
-import { apiMock } from '../../services/mockApi';
+import apiService from '../../services/api';
 import { Product, Warehouse, Location, AdjustmentType, ToastType } from '../../types';
 import { useToast } from '../../context/ToastContext';
 import AdjustmentPreview from '../../components/adjustments/AdjustmentPreview';
@@ -14,7 +13,6 @@ const AdjustmentForm = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
   
-  // Form State
   const [type, setType] = useState<AdjustmentType>('ADD');
   const [productId, setProductId] = useState('');
   const [quantity, setQuantity] = useState(1);
@@ -23,7 +21,6 @@ const AdjustmentForm = () => {
   const [locationId, setLocationId] = useState('');
   const [note, setNote] = useState('');
 
-  // Data State
   const [products, setProducts] = useState<Product[]>([]);
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
@@ -35,15 +32,14 @@ const AdjustmentForm = () => {
     const loadData = async () => {
       try {
         const [prodData, whData, locData] = await Promise.all([
-          apiMock.products.getList(),
-          apiMock.warehouse.getAll(),
-          apiMock.locations.getAll()
+          apiService.products.list(),
+          apiService.warehouse.getAll(),
+          apiService.locations.getAll()
         ]);
         setProducts(prodData);
         setWarehouses(whData);
         setLocations(locData);
         
-        // Set defaults
         if (whData.length > 0) setWarehouseId(whData[0].id);
       } catch (err) {
         addToast('Failed to load form data', ToastType.ERROR);
@@ -54,16 +50,13 @@ const AdjustmentForm = () => {
     loadData();
   }, []);
 
-  // Update selected product object when ID changes
   useEffect(() => {
     const prod = products.find(p => p.id === productId) || null;
     setSelectedProduct(prod);
   }, [productId, products]);
 
-  // Filter locations by warehouse
   const filteredLocations = locations.filter(l => l.warehouseId === warehouseId);
 
-  // Auto-select first location when warehouse changes
   useEffect(() => {
     if (filteredLocations.length > 0) {
       setLocationId(filteredLocations[0].id);
@@ -80,28 +73,19 @@ const AdjustmentForm = () => {
 
     setSubmitting(true);
     try {
-      // Create Payload
-      const payload: any = {
+      const payload = {
+        productId,
         warehouseId,
         locationId,
-        productId,
-        productCode: selectedProduct?.code || '',
-        productName: selectedProduct?.name || '',
-        currentStock: selectedProduct?.stock || 0,
         type,
         quantity,
         reason,
-        note,
-        date: new Date().toISOString(),
-        status: 'Draft' // Initially draft
+        note
       };
 
-      // Create
-      const newAdj = await apiMock.adjustments.create(payload);
+      await apiService.adjustments.create(payload);
       
-      // If Apply requested
       if (status === 'Applied') {
-        await apiMock.adjustments.apply(newAdj.id);
         addToast('Adjustment Applied Successfully', ToastType.SUCCESS);
       } else {
         addToast('Draft Saved', ToastType.SUCCESS);
@@ -133,11 +117,9 @@ const AdjustmentForm = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* Left Form */}
           <div className="lg:col-span-2 space-y-6 animate-slide-up">
             <div className="bg-white dark:bg-dark-card p-6 rounded-2xl border border-gray-200 dark:border-dark-border shadow-sm">
               
-              {/* Type Selector */}
               <div className="grid grid-cols-3 gap-3 mb-6">
                  {['ADD', 'REMOVE', 'CORRECTION'].map((t) => (
                    <button
@@ -156,7 +138,6 @@ const AdjustmentForm = () => {
                  ))}
               </div>
 
-              {/* Location & Product */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div className="relative group">
                   <label className="block text-sm font-medium text-gray-500 mb-1">Warehouse</label>
@@ -197,12 +178,11 @@ const AdjustmentForm = () => {
                       className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-dark-bg border border-gray-200 dark:border-dark-border rounded-xl outline-none focus:border-brand-500"
                     >
                       <option value="">Select Product...</option>
-                      {products.map(p => <option key={p.id} value={p.id}>[{p.code}] {p.name}</option>)}
+                      {products.map(p => <option key={p.id} value={p.id}>[{p.sku}] {p.name}</option>)}
                     </select>
                  </div>
               </div>
 
-              {/* Qty & Reason */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                  <Input 
                    label="Quantity" 
@@ -232,7 +212,6 @@ const AdjustmentForm = () => {
                 </div>
               </div>
 
-              {/* Note */}
               <div className="relative">
                  <label className="block text-sm font-medium text-gray-500 mb-1">Note (Optional)</label>
                  <textarea 
@@ -243,7 +222,6 @@ const AdjustmentForm = () => {
                  />
               </div>
 
-              {/* Actions */}
               <div className="flex gap-4 mt-8 pt-6 border-t border-gray-100 dark:border-dark-border">
                  <Button 
                    type="button" 
@@ -266,7 +244,6 @@ const AdjustmentForm = () => {
             </div>
           </div>
 
-          {/* Right Preview */}
           <div className="lg:col-span-1">
              <AdjustmentPreview 
                product={selectedProduct} 

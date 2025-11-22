@@ -1,8 +1,7 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Layout from '../../components/Layout';
-import { apiMock } from '../../services/mockApi';
+import apiService from '../../services/api';
 import { DeliveryDetail as IDeliveryDetail, Product } from '../../types';
 import DeliveryHeader from '../../components/operations/DeliveryHeader';
 import DeliveryMeta from '../../components/operations/DeliveryMeta';
@@ -23,7 +22,7 @@ const DeliveryDetail = () => {
     const fetchDelivery = async () => {
       if (!id) return;
       try {
-        const data = await apiMock.operations.getDeliveryById(parseInt(id));
+        const data = await apiService.operations.getDeliveryById(parseInt(id));
         setDelivery(data);
       } catch (error) {
         console.error(error);
@@ -44,7 +43,7 @@ const DeliveryDetail = () => {
       return;
     }
     try {
-       await apiMock.operations.validateDelivery(delivery!.id);
+       await apiService.operations.validateDelivery(delivery!.id);
        setDelivery(prev => prev ? ({ ...prev, status: 'Ready' }) : null);
        addToast("Delivery validated successfully!", ToastType.SUCCESS);
     } catch (err) {
@@ -54,7 +53,7 @@ const DeliveryDetail = () => {
 
   const handleCancel = async () => {
      if(window.confirm("Are you sure you want to cancel this delivery?")) {
-        await apiMock.operations.cancelDelivery(delivery!.id);
+        await apiService.operations.cancelDelivery(delivery!.id);
         setDelivery(prev => prev ? ({ ...prev, status: 'Cancelled' }) : null);
         addToast("Delivery cancelled", ToastType.INFO);
      }
@@ -117,7 +116,6 @@ const DeliveryDetail = () => {
     <Layout showSidebar>
       <div className="max-w-5xl mx-auto animate-fade-in pb-20">
         
-        {/* Breadcrumb / Back */}
         <div className="flex items-center gap-2 mb-6 text-sm text-gray-500">
            <Link to="/operations/deliveries" className="flex items-center hover:text-brand-500 transition-colors">
              <ArrowLeft size={16} className="mr-1" /> Deliveries

@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
-import { UserRole, ToastType } from '../../types';
-import { apiMock } from '../../services/mockApi';
+import { ToastType } from '../../types';
+import apiService from '../../services/api';
 import { useToast } from '../../context/ToastContext';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import { Mail, User, Shield } from 'lucide-react';
 
-const CreateUser = () => {
+interface CreateUserProps {
+  onSuccess?: () => void;
+}
+
+const CreateUser: React.FC<CreateUserProps> = ({ onSuccess }) => {
   const { addToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    username: '',
+    name: '',
     email: '',
-    role: UserRole.USER
+    role_id: 2, // Default to stock_manager
+    temp_password: ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -20,29 +25,29 @@ const CreateUser = () => {
     setIsLoading(true);
 
     try {
-      await apiMock.adminCreateUser(formData);
-      addToast(`User ${formData.username} created successfully! Email sent.`, ToastType.SUCCESS);
-      setFormData({ username: '', email: '', role: UserRole.USER }); // Reset
-    } catch (error) {
-      addToast('Failed to create user.', ToastType.ERROR);
+      await apiService.admin.createUser(formData);
+      addToast(`User ${formData.name} created successfully!`, ToastType.SUCCESS);
+      
+      // Reset form
+      setFormData({ name: '', email: '', role_id: 2, temp_password: '' });
+      
+      if (onSuccess) onSuccess();
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.detail || 'Failed to create user';
+      addToast(errorMsg, ToastType.ERROR);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="bg-white dark:bg-dark-card rounded-2xl border border-gray-200 dark:border-dark-border p-6 shadow-xl">
-      <div className="mb-6">
-        <h2 className="text-xl font-display font-bold text-gray-900 dark:text-white">Create New User</h2>
-        <p className="text-gray-500 dark:text-gray-400 text-sm">They will receive a generated password via email.</p>
-      </div>
-
+    <div className="bg-white dark:bg-dark-card rounded-2xl p-6">
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
-          label="Username"
+          label="Full Name"
           icon={User}
-          value={formData.username}
-          onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           required
         />
         
@@ -55,24 +60,54 @@ const CreateUser = () => {
           required
         />
 
+        <Input
+          label="Temporary Password"
+          type="password"
+          value={formData.temp_password}
+          onChange={(e) => setFormData({ ...formData, temp_password: e.target.value })}
+          required
+          placeholder="Min 8 characters"
+        />
+
         <div className="mb-5">
-            <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 ml-1">Role</label>
-            <div className="grid grid-cols-2 gap-4">
-                <button
-                    type="button"
-                    onClick={() => setFormData({...formData, role: UserRole.USER})}
-                    className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-all ${formData.role === UserRole.USER ? 'border-brand-500 bg-brand-500/10 text-brand-500' : 'border-gray-200 dark:border-dark-border text-gray-500'}`}
-                >
-                    <User size={18} /> User
-                </button>
-                <button
-                    type="button"
-                    onClick={() => setFormData({...formData, role: UserRole.ADMIN})}
-                    className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-all ${formData.role === UserRole.ADMIN ? 'border-brand-500 bg-brand-500/10 text-brand-500' : 'border-gray-200 dark:border-dark-border text-gray-500'}`}
-                >
-                    <Shield size={18} /> Admin
-                </button>
-            </div>
+          <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 ml-1">Role</label>
+          <div className="grid grid-cols-3 gap-3">
+            <button
+              type="button"
+              onClick={() => setFormData({...formData, role_id: 1})}
+              className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-all ${
+                formData.role_id === 1 
+                  ? 'border-brand-500 bg-brand-500/10 text-brand-500' 
+                  : 'border-gray-200 dark:border-dark-border text-gray-500'
+              }`}
+            >
+              <Shield size={18} /> Admin
+            </button>
+            
+            <button
+              type="button"
+              onClick={() => setFormData({...formData, role_id: 2})}
+              className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-all ${
+                formData.role_id === 2 
+                  ? 'border-brand-500 bg-brand-500/10 text-brand-500' 
+                  : 'border-gray-200 dark:border-dark-border text-gray-500'
+              }`}
+            >
+              <User size={18} /> Manager
+            </button>
+            
+            <button
+              type="button"
+              onClick={() => setFormData({...formData, role_id: 3})}
+              className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-all ${
+                formData.role_id === 3 
+                  ? 'border-brand-500 bg-brand-500/10 text-brand-500' 
+                  : 'border-gray-200 dark:border-dark-border text-gray-500'
+              }`}
+            >
+              <User size={18} /> Staff
+            </button>
+          </div>
         </div>
 
         <Button type="submit" className="w-full" isLoading={isLoading}>

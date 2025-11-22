@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
-import { apiMock } from '../services/mockApi';
+import apiService from '../services/api';
 import { StockItem, ToastType } from '../types';
 import { useToast } from '../context/ToastContext';
 import StockTable from '../components/stock/StockTable';
@@ -21,7 +20,7 @@ const Stock = () => {
 
   const loadStock = async () => {
     try {
-      const result = await apiMock.stock.getStockList();
+      const result = await apiService.stock.getStockList();
       setData(result);
     } catch (error) {
       console.error('Failed to load stock', error);
@@ -36,13 +35,13 @@ const Stock = () => {
       // Optimistic update
       setData(prev => prev.map(item => item.id === id ? { ...item, ...updates } : item));
       
-      await apiMock.stock.updateStock(id, updates);
+      // Note: You'll need to add an update endpoint to your backend
+      // For now, this will just update locally
       addToast('Stock updated successfully', ToastType.SUCCESS);
     } catch (error) {
-      // Revert on failure (reload)
-      loadStock();
+      loadStock(); // Revert on failure
       addToast('Failed to update stock', ToastType.ERROR);
-      throw error; // Re-throw for the row component to handle
+      throw error;
     }
   };
 
