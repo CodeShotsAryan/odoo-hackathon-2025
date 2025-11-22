@@ -8,14 +8,10 @@ from ..dependencies import require_role
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from ..config import SMTP_SERVER, SMTP_PORT, SMTP_EMAIL, SMTP_PASSWORD  # import config
 
 router = APIRouter(prefix="/admin/users", tags=["admin-users"])
 pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
-SMTP_EMAIL = "inventrivia@gmail.com"
-SMTP_PASSWORD = "jwndhegazrzdbdfn"  # use env var in production
 
 ROLE_MAP = {1: "Admin", 2: "Inventory Manager", 3: "Staff"}
 
