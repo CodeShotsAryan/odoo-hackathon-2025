@@ -4,7 +4,7 @@
 
 ---
 
-## 👥 Team - Visca Coders
+## 👥 Team – Visca Coders
 
 | Role | Name |
 | :--- | :--- |
@@ -12,10 +12,11 @@
 | **Team Member** | Sanket Bhandari |
 | **Team Member** | Swaraj Kanse |
 | **Team Member** | Raj Ghorpade |
-| **Reviewer** | Aman Patel  |
+| **Reviewer** | Aman Patel |
 
 ---
-
+### Video Link :- 
+https://drive.google.com/file/d/1PPSl8aBzAH2r0jn-UHcpGDqKkPQjOObR/view?usp=drivesdk
 ## 📝 Problem Statement
 
 The goal is to build a modular **IMS (Inventory Management System)** that digitizes and streamlines all stock-related operations inside a business. The system eliminates manual registers, Excel sheets, and inconsistent tracking by offering:
@@ -30,7 +31,8 @@ The goal is to build a modular **IMS (Inventory Management System)** that digiti
 * **Warehouse Staff:** Handle transfers, picking, shelving, and counting.
 
 ---
-![WhatsApp Image 2025-11-22 at 14 08 17_3c320efc](https://github.com/user-attachments/assets/a2f7c4af-13c3-46fc-98fb-78e7fe577456)
+
+![System Preview](https://github.com/user-attachments/assets/a2f7c4af-13c3-46fc-98fb-78e7fe577456)
 
 ## 🚀 Features
 
@@ -82,9 +84,8 @@ The goal is to build a modular **IMS (Inventory Management System)** that digiti
 
 ## 📁 Project Structure
 
-### Frontend (Next.js)
 ```text
-client/
+client/ (Frontend)
 ├── app/
 ├── components/
 ├── pages/
@@ -93,3 +94,17 @@ client/
 ├── utils/
 ├── package.json
 └── next.config.js
+
+server/ (Backend)
+├── app/
+│   ├── db/
+│   │   ├── db.py
+│   │   └── dependencies.py
+│   ├── models/
+│   ├── routes/
+│   ├── schemas/
+│   ├── services/
+│   ├── main.py
+│   └── settings.py
+├── requirements.txt
+└── test_database.py
