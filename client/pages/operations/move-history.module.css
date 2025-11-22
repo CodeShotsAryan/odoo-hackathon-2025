@@ -1,0 +1,116 @@
+/* move-history.module.css — page-scoped, theme-aware */
+
+/* container */
+.move-history-scroll {
+  max-height: 640px; /* adjust to page layout */
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  --track-dark: rgba(255,255,255,0.02);
+  --thumb-dark: rgba(255,255,255,0.06);
+  --track-light: rgba(0,0,0,0.04);
+  --thumb-light: rgba(0,0,0,0.08);
+  --accent-start: #FF7A1A;
+  --accent-end: #FF8C34;
+}
+
+/* TABLE ROWS — base subtle striping */
+.table-striping tr:nth-child(odd) {
+  background-color: rgba(255,255,255,0.01); /* very subtle in dark */
+}
+.table-striping tr:nth-child(even) {
+  background: transparent;
+}
+
+/* THEME-AWARE OPERATION TINTS (dark mode default) */
+.row-in {
+  background-color: rgba(15,81,50,0.06);   /* dark: soft green */
+  border-left: 4px solid rgba(34,197,94,0.08);
+}
+.row-out {
+  background-color: rgba(75,26,26,0.05);   /* dark: soft red */
+  border-left: 4px solid rgba(255,99,99,0.07);
+}
+.row-transfer {
+  background-color: rgba(255,255,255,0.01); /* subtle slate tint */
+  border-left: 4px solid rgba(255,255,255,0.02);
+}
+
+/* LIGHT THEME OVERRIDES — stronger tints for readability on white */
+body.theme-light .table-striping tr:nth-child(odd) {
+  background-color: rgba(0,0,0,0.02); /* subtle light striping */
+}
+body.theme-light .row-in {
+  background-color: rgba(34,197,94,0.06);  /* light: green tint */
+  border-left-color: rgba(34,197,94,0.12);
+  color: #0F1724; /* ensure dark text */
+}
+body.theme-light .row-out {
+  background-color: rgba(255,60,60,0.06);  /* light: red tint */
+  border-left-color: rgba(255,60,60,0.12);
+  color: #0F1724;
+}
+body.theme-light .row-transfer {
+  background-color: rgba(0,0,0,0.02);
+  color: #0F1724;
+}
+
+/* ensure text contrast on tinted rows */
+.table-row .cell, .table-row .status-pill {
+  color: var(--text, #F4F4F5);
+}
+body.theme-light .table-row .cell { color: #0F1724; }
+
+/* subtle hover lift */
+.table-row:hover, .table-row:focus-within {
+  transform: translateY(-1px);
+  transition: transform .18s ease;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.28);
+}
+
+/* PAGE-SCOPED SCROLLBAR (WebKit) */
+.move-history-scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.move-history-scroll::-webkit-scrollbar-track {
+  background: var(--track-dark);
+  border-radius: 999px;
+}
+.move-history-scroll::-webkit-scrollbar-thumb {
+  background: var(--thumb-dark);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* hover/active: orange accent gradient */
+.move-history-scroll::-webkit-scrollbar-thumb:hover,
+.move-history-scroll::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+  box-shadow: 0 6px 18px rgba(255,122,26,0.16);
+}
+
+/* Firefox */
+.move-history-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--thumb-dark) var(--track-dark);
+}
+.move-history-scroll:hover {
+  scrollbar-color: var(--accent-start) rgba(255,255,255,0.02);
+}
+
+/* LIGHT THEME SCROLLBAR OVERRIDES */
+body.theme-light .move-history-scroll::-webkit-scrollbar-track {
+  background: var(--track-light);
+}
+body.theme-light .move-history-scroll::-webkit-scrollbar-thumb {
+  background: var(--thumb-light);
+}
+body.theme-light .move-history-scroll:hover::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+}
+
+/* reduced motion safety */
+@media (prefers-reduced-motion: reduce) {
+  .table-row, .move-history-scroll::-webkit-scrollbar-thumb { transition: none !important; transform: none !important; }
+}

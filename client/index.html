@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockMaster</title>
+    <!-- Google Fonts: Inter and Space Grotesk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              display: ['Space Grotesk', 'sans-serif'],
+            },
+            colors: {
+              brand: {
+                50: '#FFF3EB',
+                100: '#FFE6D1',
+                200: '#FFCB9E',
+                300: '#FFB06B',
+                400: '#FF9538',
+                500: '#FF7A1A', // Main Accent
+                600: '#E66000',
+                700: '#B34B00',
+                800: '#803600',
+                900: '#4D2000',
+              },
+              dark: {
+                bg: '#0C0C0F',
+                card: '#16161A',
+                hover: '#1F1F25',
+                border: '#2A2A30'
+              },
+              'tint-in-dark': '#0F5132',
+              'tint-out-dark': '#4B1A1A',
+              'tint-transfer-dark': '#11151A',
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.4s ease-out',
+              'slide-up': 'slideUp 0.4s ease-out',
+              'slide-in-right': 'slideInRight 0.3s ease-out',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              slideInRight: {
+                '0%': { transform: 'translateX(100%)' },
+                '100%': { transform: 'translateX(0)' },
+              }
+            },
+            boxShadow: {
+              'glow-orange': '0 8px 30px rgba(255,122,26,0.16)',
+              'glow-orange-strong': '0 16px 60px rgba(255,122,26,0.16), 0 0 40px rgba(255,122,26,0.06) inset',
+              'mh-row-hover': '0 6px 18px rgba(0,0,0,0.28)'
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Custom scrollbar for that premium feel */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0C0C0F;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #2A2A30;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #FF7A1A;
+      }
+      
+      /* Custom Glow Effects */
+      .glow-orange {
+        box-shadow: 0 8px 30px rgba(255,122,26,0.16);
+      }
+      .glow-orange-strong {
+        box-shadow: 0 16px 60px rgba(255,122,26,0.16), 0 0 40px rgba(255,122,26,0.06) inset;
+      }
+      
+      /* Glassmorphism helper */
+      .glass {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .dark .glass {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      /* Navbar Specific Styles */
+      .nav-link-active {
+        color: #FF7A1A;
+        position: relative;
+      }
+      .nav-link-active::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #FF7A1A;
+        box-shadow: 0 0 8px #FF7A1A;
+        border-radius: 2px;
+      }
+      
+      .nav-dropdown {
+        transform-origin: top center;
+        animation: dropdownEnter 0.2s ease-out forwards;
+      }
+      
+      @keyframes dropdownEnter {
+        from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
+      }
+
+      /* --- MOVE HISTORY STYLES (Previously in CSS Module) --- */
+      
+      /* container */
+      .move-history-scroll {
+        max-height: 640px; /* adjust to page layout */
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        --track-dark: rgba(255,255,255,0.02);
+        --thumb-dark: rgba(255,255,255,0.06);
+        --track-light: rgba(0,0,0,0.04);
+        --thumb-light: rgba(0,0,0,0.08);
+        --accent-start: #FF7A1A;
+        --accent-end: #FF8C34;
+      }
+
+      /* TABLE ROWS — base subtle striping */
+      .table-striping tr:nth-child(odd) {
+        background-color: rgba(255,255,255,0.01); /* very subtle in dark */
+      }
+      .table-striping tr:nth-child(even) {
+        background: transparent;
+      }
+
+      /* THEME-AWARE OPERATION TINTS (dark mode default) */
+      .row-in {
+        background-color: rgba(15,81,50,0.06);   /* dark: soft green */
+        border-left: 4px solid rgba(34,197,94,0.08);
+      }
+      .row-out {
+        background-color: rgba(75,26,26,0.05);   /* dark: soft red */
+        border-left: 4px solid rgba(255,99,99,0.07);
+      }
+      .row-transfer {
+        background-color: rgba(255,255,255,0.01); /* subtle slate tint */
+        border-left: 4px solid rgba(255,255,255,0.02);
+      }
+
+      /* LIGHT THEME OVERRIDES — stronger tints for readability on white */
+      body.theme-light .table-striping tr:nth-child(odd) {
+        background-color: rgba(0,0,0,0.02); /* subtle light striping */
+      }
+      body.theme-light .row-in {
+        background-color: rgba(34,197,94,0.06);  /* light: green tint */
+        border-left-color: rgba(34,197,94,0.12);
+        color: #0F1724; /* ensure dark text */
+      }
+      body.theme-light .row-out {
+        background-color: rgba(255,60,60,0.06);  /* light: red tint */
+        border-left-color: rgba(255,60,60,0.12);
+        color: #0F1724;
+      }
+      body.theme-light .row-transfer {
+        background-color: rgba(0,0,0,0.02);
+        color: #0F1724;
+      }
+
+      /* ensure text contrast on tinted rows */
+      .table-row .cell, .table-row .status-pill {
+        color: var(--text, #F4F4F5);
+      }
+      body.theme-light .table-row .cell { color: #0F1724; }
+
+      /* subtle hover lift */
+      .table-row:hover, .table-row:focus-within {
+        transform: translateY(-1px);
+        transition: transform .18s ease;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.28);
+      }
+
+      /* PAGE-SCOPED SCROLLBAR (WebKit) */
+      .move-history-scroll::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      .move-history-scroll::-webkit-scrollbar-track {
+        background: var(--track-dark);
+        border-radius: 999px;
+      }
+      .move-history-scroll::-webkit-scrollbar-thumb {
+        background: var(--thumb-dark);
+        border-radius: 999px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+      }
+
+      /* hover/active: orange accent gradient */
+      .move-history-scroll::-webkit-scrollbar-thumb:hover,
+      .move-history-scroll::-webkit-scrollbar-thumb:active {
+        background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+        box-shadow: 0 6px 18px rgba(255,122,26,0.16);
+      }
+
+      /* Firefox */
+      .move-history-scroll {
+        scrollbar-width: thin;
+        scrollbar-color: var(--thumb-dark) var(--track-dark);
+      }
+      .move-history-scroll:hover {
+        scrollbar-color: var(--accent-start) rgba(255,255,255,0.02);
+      }
+
+      /* LIGHT THEME SCROLLBAR OVERRIDES */
+      body.theme-light .move-history-scroll::-webkit-scrollbar-track {
+        background: var(--track-light);
+      }
+      body.theme-light .move-history-scroll::-webkit-scrollbar-thumb {
+        background: var(--thumb-light);
+      }
+      body.theme-light .move-history-scroll:hover::-webkit-scrollbar-thumb {
+        background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+      }
+
+      /* reduced motion safety */
+      @media (prefers-reduced-motion: reduce) {
+        .table-row, .move-history-scroll::-webkit-scrollbar-thumb { transition: none !important; transform: none !important; }
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.6"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-gray-50 text-gray-900 dark:bg-dark-bg dark:text-gray-100 transition-colors duration-300 antialiased selection:bg-brand-500 selection:text-white">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

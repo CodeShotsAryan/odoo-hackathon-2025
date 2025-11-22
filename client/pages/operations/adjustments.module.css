@@ -1,0 +1,37 @@
+
+/* adjustments.module.css */
+
+.row-add {
+  background-color: rgba(34,197,94,0.06); /* Green tint */
+  border-left: 4px solid rgba(34,197,94,0.12);
+}
+
+.row-remove {
+  background-color: rgba(239,68,68,0.06); /* Red tint */
+  border-left: 4px solid rgba(239,68,68,0.12);
+}
+
+.row-correction {
+  background-color: rgba(255,122,26,0.04); /* Brand tint */
+  border-left: 4px solid rgba(255,122,26,0.12);
+}
+
+.status-pill {
+  @apply px-2 py-0.5 rounded text-xs font-medium border;
+}
+
+.status-draft {
+  @apply bg-gray-100 text-gray-600 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700;
+}
+
+.status-applied {
+  @apply bg-green-100 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800;
+}
+
+.status-pending {
+  @apply bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800;
+}
+
+.status-cancelled {
+  @apply bg-red-50 text-red-600 border-red-100 dark:bg-red-900/10 dark:text-red-400 dark:border-red-900/30 line-through opacity-70;
+}
