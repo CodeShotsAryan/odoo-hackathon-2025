@@ -24,10 +24,8 @@ const Dashboard: React.FC<DashboardProps> = ({ role }) => {
     const fetchData = async () => {
       try {
         const data = await apiService.dashboard.getSummary();
-        
-        // Transform backend data to match frontend format
         setSummary({
-          receiptCount: 0, // Add logic based on your needs
+          receiptCount: 0,
           deliveryCount: 0,
           receiptStats: { late: 0, waiting: 0, total: data.total_products || 0 },
           deliveryStats: { late: 0, waiting: 0, total: data.low_stock_items || 0 },
@@ -36,7 +34,7 @@ const Dashboard: React.FC<DashboardProps> = ({ role }) => {
             invalid: Math.floor(data.total_stock * 0.15) || 15, 
             resources: Math.floor(data.total_stock * 0.20) || 20 
           },
-          activityData: [12, 18, 15, 25, 22, 30, 28, 35, 20, 40, 38, 45] // Mock for now
+          activityData: [12, 18, 15, 25, 22, 30, 28, 35, 20, 40, 38, 45]
         });
       } catch (error) {
         console.error('Failed to fetch dashboard data', error);
@@ -60,26 +58,32 @@ const Dashboard: React.FC<DashboardProps> = ({ role }) => {
     <Layout showSidebar userRole={role}>
       <div className="space-y-8">
         
-        {/* Header Section with Admin Action */}
+        {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-slide-up">
           <div>
             <h1 className="text-3xl font-display font-bold text-gray-900 dark:text-white">Dashboard</h1>
             <p className="text-gray-500 dark:text-gray-400 mt-1">Overview of inventory operations and status.</p>
           </div>
-          
-          {role === UserRole.ADMIN && (
-            <Button onClick={openCreateUser} className="shadow-lg shadow-brand-500/20 glow-orange">
+        </div>
+
+        {/* Create User Button Above Cards */}
+        {role === UserRole.ADMIN && (
+          <div className="flex justify-end">
+            <Button
+              onClick={openCreateUser}
+              className="shadow-lg shadow-brand-500/20 glow-orange mb-2"
+            >
               <Plus size={20} className="mr-2" /> Create User
             </Button>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Hero Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-slide-up" style={{ animationDelay: '100ms' }}>
           {loading ? (
             <>
-               <div className="h-48 bg-gray-100 dark:bg-dark-card rounded-2xl animate-pulse" />
-               <div className="h-48 bg-gray-100 dark:bg-dark-card rounded-2xl animate-pulse" />
+              <div className="h-48 bg-gray-100 dark:bg-dark-card rounded-2xl animate-pulse" />
+              <div className="h-48 bg-gray-100 dark:bg-dark-card rounded-2xl animate-pulse" />
             </>
           ) : summary ? (
             <>
@@ -99,7 +103,7 @@ const Dashboard: React.FC<DashboardProps> = ({ role }) => {
           ) : null}
         </div>
 
-        {/* Charts Section */}
+        {/* Charts */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 animate-slide-up" style={{ animationDelay: '200ms' }}>
           {loading ? (
             <>
@@ -115,7 +119,7 @@ const Dashboard: React.FC<DashboardProps> = ({ role }) => {
         </div>
       </div>
 
-      {/* Modals */}
+      {/* Create User Modal */}
       <Modal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)}
@@ -123,7 +127,6 @@ const Dashboard: React.FC<DashboardProps> = ({ role }) => {
       >
         <CreateUser onSuccess={() => setIsModalOpen(false)} />
       </Modal>
-
     </Layout>
   );
 };

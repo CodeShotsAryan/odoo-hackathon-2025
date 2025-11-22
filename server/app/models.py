@@ -12,7 +12,7 @@ class Role(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(50), unique=True, nullable=False)
 
-class User(Base):
+class User(Base):   
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
@@ -35,6 +35,7 @@ class Product(Base):
     min_stock_level = Column(Integer, default=0)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
 
 class Warehouse(Base):
     __tablename__ = "warehouses"

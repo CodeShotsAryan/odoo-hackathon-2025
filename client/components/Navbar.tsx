@@ -61,10 +61,10 @@ const Navbar = () => {
             {/* Logo */}
             <Link to="/dashboard" className="flex items-center gap-2.5 group">
               <div className="w-9 h-9 bg-brand-500 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/25 transition-transform group-hover:scale-105 group-hover:rotate-3">
-                <span className="text-white font-display font-bold text-xl">S</span>
+                <span className="text-white font-display font-bold text-xl">I</span>
               </div>
               <span className="text-xl font-display font-bold text-gray-900 dark:text-white tracking-tight">
-                StockMaster
+                Inventrivia
               </span>
             </Link>
 
