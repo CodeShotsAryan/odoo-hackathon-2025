@@ -45,7 +45,6 @@ def resend_otp(payload: OTPRequest, db: Session = Depends(get_db)):
     res = send_otp(db, payload.email, force_new=True)
     return {"message": "OTP resent to your email"}
 
-
 @router.post("/verify-otp")
 def verify(payload: OTPVerify, db: Session = Depends(get_db)):
     new_hash = pwd.hash(payload.new_password)
