@@ -12,7 +12,7 @@
 | **Team Member** | Sanket Bhandari |
 | **Team Member** | Swaraj Kanse |
 | **Team Member** | Raj Ghorpade |
-| **Reviewer** | Aman Patel (ampa) |
+| **Reviewer** | Aman Patel  |
 
 ---
 
