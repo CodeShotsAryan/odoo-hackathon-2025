@@ -1,0 +1,21 @@
+
+/* settings.module.css */
+.settingsCard {
+  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+}
+
+.formLabel {
+  @apply text-sm font-medium text-gray-500 dark:text-gray-400 mb-1 block;
+}
+
+.actionIcon {
+  @apply p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-dark-bg/50 transition-colors;
+}
+
+.actionIconEdit:hover {
+  @apply text-brand-500 bg-brand-50 dark:bg-brand-900/10;
+}
+
+.actionIconDelete:hover {
+  @apply text-red-500 bg-red-50 dark:bg-red-900/10;
+}

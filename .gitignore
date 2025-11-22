@@ -15,3 +15,13 @@ venv/
 
 # Environment variables
 .env
+
+# Node.js / Frontend
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+dist/
+build/
+.next/
+coverage/
