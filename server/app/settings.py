@@ -5,7 +5,7 @@ load_dotenv()
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://aryan:hackodoo@82.112.236.51:5433/odoo_hackathon"
+    "your_postgres"
 )
 
 JWT_SECRET = os.getenv("JWT_SECRET", "super_secret_key")
@@ -16,6 +16,6 @@ OTP_RESEND_WINDOW_SECONDS = int(os.getenv("OTP_RESEND_WINDOW_SECONDS", "60"))
 
 SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
-SMTP_USER = os.getenv("SMTP_USER", "bhandarisanketp@gmail.com")
-SMTP_PASS = os.getenv("SMTP_PASS", "svxrqoyfdavkzsir")
+SMTP_USER = os.getenv("SMTP_USER", "your_email@gmail
+SMTP_PASS = os.getenv("SMTP_PASS", "")
 FROM_EMAIL = os.getenv("FROM_EMAIL", SMTP_USER)
